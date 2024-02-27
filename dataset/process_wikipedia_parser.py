@@ -48,7 +48,7 @@ def process_page(data, wikipedia, output_dir, finished_ids):
 def main():
     parser = argparse.ArgumentParser(description="Process Wikipedia pages and save metadata.")
     parser.add_argument("--dataset_path", type=str, default="data/Wikipedia2023-len-1k-to-3k/train", help="Path to the dataset")
-    parser.add_argument("--output_dir", type=str, default="output/wikipedia/metadata", help="Directory to save processed page data")
+    parser.add_argument("--output_dir", type=str, default="data/metadata", help="Directory to save processed page data")
     args = parser.parse_args()
 
     dataset = load_from_disk(args.dataset_path)

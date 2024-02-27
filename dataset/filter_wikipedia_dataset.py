@@ -21,10 +21,10 @@ def filter_dataset(old_version, new_version, min_length, max_length, output_dir)
     unique_titles_2023 = new_titles.difference(old_titles)
     
     dataset_2023 = new_dataset.filter(lambda x: x["title"] in unique_titles_2023)
-    dataset_2023.save_to_disk(f"{output_dir}/wikipedia2023set")
+    dataset_2023.save_to_disk(f"{output_dir}/Wikipedia2023")
     
     filtered_dataset = dataset_2023.filter(lambda x: min_length <= len(x["text"].split()) <= max_length)
-    filtered_dataset.save_to_disk(f"{output_dir}/wiki2023len1to3k")
+    filtered_dataset.save_to_disk(f"{output_dir}/Wikipedia2023-len-1k-to-3k")
 
 def main():
     parser = argparse.ArgumentParser(description="Filter Wikipedia datasets based on titles and text length.")
@@ -32,7 +32,7 @@ def main():
     parser.add_argument("--new_version", type=str, default="20231101.en", help="Version of the newer Wikipedia dataset.")
     parser.add_argument("--min_length", type=int, default=1000, help="Minimum length of the text.")
     parser.add_argument("--max_length", type=int, default=3000, help="Maximum length of the text.")
-    parser.add_argument("--output_dir", type=str, default=".", help="Directory to save the filtered datasets.")
+    parser.add_argument("--output_dir", type=str, default="data", help="Directory to save the filtered datasets.")
     
     args = parser.parse_args()
 

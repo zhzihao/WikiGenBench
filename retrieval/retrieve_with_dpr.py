@@ -25,12 +25,11 @@ def load_sections(file_path):
         data = json.load(file)
         return data
 
-def main(docs_dir, chunks_dir, metadata_dir, sections_file, embeddings_dir, output_file, models_dir, cuda_device):
+def main(docs_dir, metadata_dir, sections_file, embeddings_dir, output_file, model_path, cuda_device, k):
     device = torch.device(f"cuda:{cuda_device}" if torch.cuda.is_available() else "cpu")
-    question_model_path = os.path.join(models_dir, "facebook/dpr-question_encoder-multiset-base")
 
-    question_tokenizer = DPRQuestionEncoderTokenizer.from_pretrained(question_model_path)
-    question_model = DPRQuestionEncoder.from_pretrained(question_model_path)
+    question_tokenizer = DPRQuestionEncoderTokenizer.from_pretrained(model_path)
+    question_model = DPRQuestionEncoder.from_pretrained(model_path)
     question_model = question_model.to(device).eval()
 
     queries = load_queries(metadata_dir)
@@ -44,7 +43,7 @@ def main(docs_dir, chunks_dir, metadata_dir, sections_file, embeddings_dir, outp
             continue  # Skip if embeddings are not available
 
         context_embeddings = torch.load(context_embeddings_path).to(device)
-        passages = load_passages(os.path.join(chunks_dir, f"{query_id}.json"))
+        passages = load_passages(os.path.join(docs_dir, f"{query_id}.json"))
 
         try:
             sections = sections_dict[str(query_id)]  # subset
@@ -52,7 +51,7 @@ def main(docs_dir, chunks_dir, metadata_dir, sections_file, embeddings_dir, outp
         except KeyError:
             continue  # Skip if no sections are available for this query
 
-        process_query(query_id, query_title, sections, context_embeddings, passages, question_model, question_tokenizer, device, results)
+        process_query(query_id, query_title, sections, context_embeddings, passages, question_model, question_tokenizer, device, results, k)
 
     with open(output_file, 'w') as outfile:
         json.dump(results, outfile)
@@ -61,7 +60,7 @@ def main(docs_dir, chunks_dir, metadata_dir, sections_file, embeddings_dir, outp
     gc.collect()
     torch.cuda.empty_cache()
 
-def process_query(query_id, query_title, sections, context_embeddings, passages, question_model, question_tokenizer, device, results):
+def process_query(query_id, query_title, sections, context_embeddings, passages, question_model, question_tokenizer, device, results, k):
     top_chunk_ids_per_section = []
     sec_set = set()
 
@@ -75,7 +74,7 @@ def process_query(query_id, query_title, sections, context_embeddings, passages,
             similarities = (query_embedding @ context_embeddings.T).squeeze(0)
 
             # Retrieve top-k passages based on the similarities
-            top_k = min(50, context_embeddings.size(0))
+            top_k = min(k, context_embeddings.size(0))
             top_results = similarities.topk(top_k)
 
             # Extract the top chunk IDs
@@ -95,14 +94,14 @@ def process_query(query_id, query_title, sections, context_embeddings, passages,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate embeddings and retrieve top passages for each query section.")
-    parser.add_argument("--docs_dir", type=str, default="data/doc", help="Directory containing document JSON files.")
-    parser.add_argument("--chunks_dir", type=str, default="data/doc/chunked", help="Directory containing chunked document JSON files.")
+    parser.add_argument("--docs_dir", type=str, default="data/doc/chunked", help="Directory containing document JSON files.")
     parser.add_argument("--metadata_dir", type=str, default="data/metadata", help="Directory containing metadata JSON files.")
-    parser.add_argument("--sections_file", type=str, default="vicuna-7b_outline.json", help="JSON file containing section outlines.")
+    parser.add_argument("--outline_file", type=str, default="vicuna-7b_outline.json", help="JSON file containing section outlines.")
     parser.add_argument("--embeddings_dir", type=str, default="dpr_context_embeddings", help="Directory to load stored context embeddings from.")
-    parser.add_argument("--output_file", type=str, default="top-50-dpr-vicuna-7b-per-section.json", help="File to save the retrieval results.")
-    parser.add_argument("--models_dir", type=str, default="/home/junhao/models", help="Directory containing the DPR model.")
+    parser.add_argument("--output_file", type=str, default="top-50-dpr-vicuna-7b.json", help="File to save the retrieval results.")
+    parser.add_argument("--model_path", type=str, default="facebook/dpr-question_encoder-multiset-base", help="Directory containing the DPR model.")
     parser.add_argument("--cuda_device", type=str, default="0", help="CUDA device to use for model inference.")
+    parser.add_argument("--docs_num", type=int, default=50, help="Number of top related documents retrieved.")
     args = parser.parse_args()
 
-    main(args.docs_dir, args.chunks_dir, args.metadata_dir, args.sections_file, args.embeddings_dir, args.output_file, args.models_dir, args.cuda_device)
+    main(args.docs_dir, args.chunks_dir, args.metadata_dir, args.outline_file, args.embeddings_dir, args.output_file, args.model_path, args.cuda_device, args.docs_num)

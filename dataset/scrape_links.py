@@ -174,7 +174,7 @@ def process_file(file_path, output_directory):
 
     scraped_data = {}
     for link_data in links_data:
-        url = link_data['link']
+        url = link_data['url']
         scraped_data[url] = scrape_url(url)[1]  # Only store the scraped text
 
     output_filepath = os.path.join(output_directory, f'{file_id}.json')
@@ -193,8 +193,8 @@ def process_links(input_directory, output_directory):
 
 def main():
     parser = argparse.ArgumentParser(description="Scrape links from JSON files and store the data.")
-    parser.add_argument("--input_directory", type=str, default='output/search_link', help="Directory containing input JSON files with links.")
-    parser.add_argument("--output_directory", type=str, default='output/scraped_data', help="Directory to store the scraped data.")
+    parser.add_argument("--input_dir", type=str, default='data/search_link', help="Directory containing input JSON files with links.")
+    parser.add_argument("--output_dir", type=str, default='data/scraped_data', help="Directory to store the scraped data.")
     args = parser.parse_args()
 
     process_links(args.input_directory, args.output_directory)
