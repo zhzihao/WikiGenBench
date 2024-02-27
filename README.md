@@ -88,11 +88,11 @@ Outlines are generated in the following format, capturing the structure of the c
 
 ## Retrieval
 
-For efficient and accurate retrieval of relevant documents, our framework adopts the Dense Passage Retrieval (DPR) methodology. DPR excels in identifying and retrieving the most relevant documents from a large corpus by generating dense vector embeddings for documents and queries, facilitating high precision in document retrieval tasks.
+For efficient and accurate retrieval of relevant documents, our framework adopts the Dense Passage Retrieval (DPR) methodology.
 
 ### Generating Context Embeddings
 
-he initial step in the DPR process involves generating embeddings for the documents. These embeddings represent documents in a high-dimensional vector space, enabling the calculation of relevance scores between documents and queries.
+The initial step in the DPR process involves generating embeddings for the documents. These embeddings represent documents in a high-dimensional vector space, enabling the calculation of relevance scores between documents and queries.
 
 To generate context embeddings, run the following command:
 
