@@ -29,6 +29,32 @@ You must cite the most relevant document for every sentence you write, in the fo
     prompt = tokenizer.decode(tokens)
     return "", prompt
 
+def construct_outline_prompt(metadata, related_docs, tokenizer, max_input_length):
+    keyword = metadata['key']
+
+    prompt_1 = f"I have a topic \"{keyword}\" that contains the following documents:\n"
+
+    prompt_2 = '\n'.join([f"Document {i+1}: {doc}" for i, doc in enumerate(related_docs)])
+    
+    prompt_3 = """\
+\nBased on the above information, you are assigned to write an outline for a Wikipedia article about this topic.
+Your outline should only include the names of the sections, without any further details.
+Do not use document name as your outline.
+The format of your outline should be as follows:
+1. Introduction
+2. <Section Name 1>
+...
+n. <Section Name n> 
+"""    
+    tokens_1 = tokenizer.encode(prompt_1, add_special_tokens=False)
+    tokens_2 = tokenizer.encode(prompt_2, add_special_tokens=False)
+    tokens_3 = tokenizer.encode(prompt_3, add_special_tokens=False)
+    
+    tokens = tokens_1 + tokens_2[:max_input_length - len(tokens_1) - len(tokens_3)] + tokens_3
+    prompt = tokenizer.decode(tokens)
+
+    return "", prompt
+
 def save_prompt(metadata, sys_prompt_list, usr_prompt_list, prompts_dir, related_docs_list, sections_list):
     key = metadata['key']
     outline = sections_list
