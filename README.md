@@ -111,3 +111,17 @@ To retrieve documents using DPR, execute the following command:
 ```
 
 The result provides a ranked list of documents based on their relevance to the query.
+
+## Evaluation
+For Evaluation,make sure you data is organized in the form of
+```json
+{
+"text": the generated wikipedia,use "==section==" to indicate the section name, and "[]" after a sentence to indicate the cited chunks.
+"retrieve": a list of chunks to be cited. 
+}
+```
+Each json files has the same name as the file in data.
+Enter the metric folder and  execute the following command
+```bash
+./metrics.py --path /path_to_your_generation
+```
