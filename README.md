@@ -81,8 +81,8 @@ Outlines are generated in the following format, capturing the structure of the c
 
 ```json
 {
-  "pageid1": ["section_name1", "section_name2", ...],
-  ...
+  "pageid1": ["section_name1", "section_name2", "..."],
+  "...":"..."
 }
 ```
 
@@ -116,8 +116,8 @@ The result provides a ranked list of documents based on their relevance to the q
 For Evaluation,make sure you data is organized in the form of
 ```json
 {
-"text": the generated wikipedia,use ==section== to indicate the section name, and [] after a sentence to indicate the cited chunks.
-"retrieve": a list of chunks to be cited. 
+"text": "the generated wikipedia,use ==section== to indicate the section name, and [] after a sentence to indicate the cited chunks."
+"retrieve": "a list of chunks to be cited. "
 }
 ```
 Each json files has the same name as the file in data.
