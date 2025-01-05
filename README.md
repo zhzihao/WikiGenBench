@@ -127,3 +127,19 @@ Enter the metrics folder and execute the following command
 ./nli.py --path /path_to_your_generation
 ./scores.py --path /path_to_your_generation
 ```
+
+## Citation
+
+If you find our work useful for your research and applications, please kindly cite using this BibTeX:
+
+```latex
+@misc{zhang2024wikigenbenchexploringfulllengthwikipedia,
+      title={WIKIGENBENCH: Exploring Full-length Wikipedia Generation under Real-World Scenario}, 
+      author={Jiebin Zhang and Eugene J. Yu and Qinyu Chen and Chenhao Xiong and Dawei Zhu and Han Qian and Mingbo Song and Weimin Xiong and Xiaoguang Li and Qun Liu and Sujian Li},
+      year={2024},
+      eprint={2402.18264},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2402.18264}, 
+}
+```
